@@ -87,9 +87,25 @@ class Controller {
 
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
+        $queries = [];
+
         $query_string =
             "INSERT IGNORE INTO $table_name (name, value, label, description) " .
             'VALUES (%s, %s, %s, %s);';
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'crawlChunkSize',
+            '20',
+            'Crawl Chunk Size',
+            'The maximum number of URLs to crawl in one batch.'
+        );
+
+        $wpdb->query( 'START TRANSACTION' );
+        foreach( $queries as $query ) {
+            $wpdb->query( $query );
+        }
+        $wpdb->query( 'COMMIT' );
     }
 
     public static function activate_for_single_site(): void {

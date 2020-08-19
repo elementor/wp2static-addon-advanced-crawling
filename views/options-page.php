@@ -11,6 +11,22 @@
 <table class="widefat striped">
     <tbody>
 
+        <tr>
+            <td style="width:50%;">
+                <label
+                    for="<?php echo $view['options']['crawlChunkSize']->name; ?>"
+                ><?php echo $view['options']['crawlChunkSize']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['crawlChunkSize']->name; ?>"
+                    name="<?php echo $view['options']['crawlChunkSize']->name; ?>"
+                    type="text"
+                    value="<?php echo $view['options']['crawlChunkSize']->value !== '' ? $view['options']['crawlChunkSize']->value : '20'; ?>"
+                />
+            </td>
+        </tr>
+
     </tbody>
 </table>
 
