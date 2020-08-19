@@ -59,6 +59,23 @@ class Controller {
         );
     }
 
+    public static function addURLQueueCrawledTime() : void {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_urls';
+
+        $row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'crawled_time'" );
+        if ( ! $row ) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN crawled_time DATETIME");
+        }
+
+        \WP2Static\Controller::ensure_index(
+            $table_name,
+            'crawled_time',
+            "CREATE INDEX crawled_time ON $table_name (crawled_time)"
+        );
+    }
+
     /**
      *  Get all add-on options
      *
@@ -111,6 +128,7 @@ class Controller {
     public static function activate_for_single_site(): void {
         self::createOptionsTable();
         self::seedOptions();
+        self::addURLQueueCrawledTime();
     }
 
     public static function activate( bool $network_wide = null ) : void {
@@ -158,8 +176,7 @@ class Controller {
     }
 
     public static function renderOptionsPage() : void {
-        self::createOptionsTable();
-        self::seedOptions();
+        self::activate_for_single_site();
 
         $view = [];
         $view['nonce_action'] = 'wp2static-advanced-crawling-options';
