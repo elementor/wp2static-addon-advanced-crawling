@@ -8,6 +8,7 @@
     <?php wp_nonce_field( $view['nonce_action'] ); ?>
     <input name="action" type="hidden" value="wp2static_advanced_crawling_save_options" />
 
+<div class="wrap">
 <table class="widefat striped">
     <tbody>
 
@@ -29,6 +30,7 @@
 
     </tbody>
 </table>
+</div>
 
 <br>
 
