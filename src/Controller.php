@@ -66,7 +66,7 @@ class Controller {
 
         $row = $wpdb->get_row( "SHOW COLUMNS FROM $table_name WHERE Field = 'crawled_time'" );
         if ( ! $row ) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN crawled_time DATETIME");
+            $wpdb->query( "ALTER TABLE $table_name ADD COLUMN crawled_time DATETIME" );
         }
 
         \WP2Static\Controller::ensure_index(
@@ -119,7 +119,7 @@ class Controller {
         );
 
         $wpdb->query( 'START TRANSACTION' );
-        foreach( $queries as $query ) {
+        foreach ( $queries as $query ) {
             $wpdb->query( $query );
         }
         $wpdb->query( 'COMMIT' );
