@@ -125,7 +125,7 @@ class Controller {
         $wpdb->query( 'COMMIT' );
     }
 
-    public static function activate_for_single_site(): void {
+    public static function activateForSingleSite(): void {
         self::createOptionsTable();
         self::seedOptions();
         self::addURLQueueCrawledTime();
@@ -147,12 +147,12 @@ class Controller {
 
             foreach ( $site_ids as $site_id ) {
                 switch_to_blog( $site_id );
-                self::activate_for_single_site();
+                self::activateForSingleSite();
             }
 
             restore_current_blog();
         } else {
-            self::activate_for_single_site();
+            self::activateForSingleSite();
         }
     }
 
@@ -176,7 +176,7 @@ class Controller {
     }
 
     public static function renderOptionsPage() : void {
-        self::activate_for_single_site();
+        self::activateForSingleSite();
 
         $view = [];
         $view['nonce_action'] = 'wp2static-advanced-crawling-options';
