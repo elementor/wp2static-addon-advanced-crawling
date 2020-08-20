@@ -10,7 +10,9 @@
   -->
   <arg name="colors" />
   <arg name="tab-width" value="2" />
-  <rule ref="PSR1" />
+  <rule ref="PSR1">
+    <exclude-pattern>/wp2static-addon-advanced-crawling.php</exclude-pattern>
+  </rule>
   <!-- Custom line length validation -->
   <rule ref="Squiz.PHP.DiscouragedFunctions" />
   <rule ref="Generic.Files.LineLength">
