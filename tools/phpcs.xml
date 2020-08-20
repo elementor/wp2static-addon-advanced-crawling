@@ -11,7 +11,6 @@
   <arg name="colors" />
   <arg name="tab-width" value="2" />
   <rule ref="PSR1" />
-  <rule ref="PSR12" />
   <!-- Custom line length validation -->
   <rule ref="Squiz.PHP.DiscouragedFunctions" />
   <rule ref="Generic.Files.LineLength">
