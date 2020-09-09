@@ -201,6 +201,68 @@ class Crawler {
     }
 
     /**
+     * Add and return parsed URLs to the provided array of URLs
+     *
+     * @param \DOMNode $node
+     * @param array<string|true> $urls
+     * @return array<string|true>
+     */
+    public static function parseURLsDOMNode( \DOMNode $node, array $urls ) : array {
+        foreach ( $node->childNodes as $child ) {
+            if ( $child instanceof \DOMElement ) {
+                $tag_name = strtolower( $child->tagName );
+                switch ( $tag_name ) {
+                    case 'a':
+                        $urls[ $child->getAttribute( 'href' ) ] = true;
+                        break;
+                    case 'img':
+                        $urls[ $child->getAttribute( 'src' ) ] = true;
+                        break;
+                    case 'link':
+                        $urls[ $child->getAttribute( 'href' ) ] = true;
+                        break;
+                    case 'script':
+                        $urls[ $child->getAttribute( 'src' ) ] = true;
+                        break;
+                    case 'source':
+                        $urls[ $child->getAttribute( 'src' ) ] = true;
+                        break;
+                }
+                $urls = self::parseURLsDOMNode( $child, $urls );
+            }
+        }
+        return $urls;
+    }
+
+    /**
+     * Return an array of URLs parsed from the provided HTML
+     *
+     * @param string $html
+     * @return array<string|true>
+     */
+    public static function parseURLsHTML( string $html ) : array {
+        $html5 = new \Masterminds\HTML5();
+        $dom = $html5->loadHTML( $html );
+        return self::parseURLsDOMNode( $dom, [] );
+    }
+
+    /**
+     * Return a given header value from an array of raw headers
+     *
+     * @param string $header_name
+     * @param array<string> $headers
+     * @return ?string
+     */
+    public static function getHeader( string $header_name, array $headers ) : ?string {
+        foreach ( $headers as $row ) {
+            if ( 0 === stripos( $row, $header_name ) ) {
+                return trim( substr( $row, 1 + strlen( $header_name ) ) );
+            }
+        }
+        return null;
+    }
+
+    /**
      * Crawls a string of full URL within WordPressSite
      *
      * @return mixed[]|null response object
@@ -224,6 +286,11 @@ class Crawler {
             $response['body'] = null;
         } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
+        } else {
+            $content_type = self::getHeader( 'content-type', $response['headers'] );
+            if ( $content_type && false !== stripos( $content_type, 'text/html' ) ) {
+                $urls = self::parseURLsHTML( $response['body'] );
+            }
         }
 
         return $response;
