@@ -20,7 +20,8 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=7.3"
+        "php": ">=7.3",
+        "masterminds/html5": "^2.7"
     },
     "require-dev": {
         "phpstan/phpstan": "*",
