@@ -20,11 +20,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        path: main
+
+    - name: Checkout WP2Static
+      uses: actions/checkout@v2
+      with:
+        repository: WP2Static/wp2static
+        path: wp2static
 
     - name: Cache PHP dependencies
       uses: actions/cache@v1
       with:
-        path: vendor
+        path: main/vendor
         key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
 
     - name: Setup PHP
@@ -36,9 +44,12 @@ jobs:
 
     - name: Validate Composer
       run: composer validate --strict
+      path: main
 
     - name: Install PHP dependencies
       run: composer install --no-interaction --no-suggest
+      path: main
 
     - name: Run our Linter and PHPStan
       run: composer test
+      path: main
