@@ -10,4 +10,5 @@ parameters:
     scanDirectories:
         - ../wp2static/src/
     ignoreErrors:
+        - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
         - '#Constant WP2STATIC_REDIRECT_CODES not found#'

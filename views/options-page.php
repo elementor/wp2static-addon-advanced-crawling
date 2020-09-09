@@ -28,6 +28,23 @@
             </td>
         </tr>
 
+        <tr>
+            <td>
+                <label
+                    for="<?php echo $view['options']['crawlOnlyChangedURLs']->name; ?>"
+                ><?php echo $view['options']['crawlOnlyChangedURLs']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['crawlOnlyChangedURLs']->name; ?>"
+                    name="<?php echo $view['options']['crawlOnlyChangedURLs']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['options']['crawlOnlyChangedURLs']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
     </tbody>
 </table>
 </div>

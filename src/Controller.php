@@ -125,6 +125,14 @@ class Controller {
             'The maximum number of URLs to crawl in one batch.'
         );
 
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'crawlOnlyChangedURLs',
+            '0',
+            'Crawl Only Changed URLs',
+            ''
+        );
+
         $wpdb->query( 'START TRANSACTION' );
         foreach ( $queries as $query ) {
             $wpdb->query( $query );
@@ -213,6 +221,18 @@ class Controller {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => intval( $_POST['crawlChunkSize'] ) ],
+            [ 'name' => 'crawlChunkSize' ]
+        );
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => isset( $_POST['crawlOnlyChangedURLs'] ) ? 1 : 0 ],
+            [ 'name' => 'crawlOnlyChangedURLs' ]
+        );
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addon-advanced-crawling' ) );
         exit;
