@@ -44,12 +44,12 @@ jobs:
 
     - name: Validate Composer
       run: composer validate --strict
-      path: main
+      working-directory: main
 
     - name: Install PHP dependencies
       run: composer install --no-interaction --no-suggest
-      path: main
+      working-directory: main
 
     - name: Run our Linter and PHPStan
       run: composer test
-      path: main
+      working-directory: main
