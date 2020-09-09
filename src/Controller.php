@@ -23,6 +23,13 @@ class Controller {
             1
         );
 
+        add_action(
+            'wp2static_crawl',
+            [ 'WP2StaticAdvancedCrawling\Crawler', 'wp2staticCrawl' ],
+            15,
+            2
+        );
+
         do_action(
             'wp2static_register_addon',
             'wp2static-addon-advanced-crawling',
@@ -244,5 +251,11 @@ class Controller {
             'wp2static-addon-advanced-crawling',
             [ $this, 'renderOptionsPage' ]
         );
+    }
+
+    public static function dbNow() : string {
+        global $wpdb;
+
+        return $wpdb->get_col( 'SELECT NOW()' )[0];
     }
 }
