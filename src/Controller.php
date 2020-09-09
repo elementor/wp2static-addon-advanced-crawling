@@ -24,6 +24,13 @@ class Controller {
         );
 
         add_action(
+            'pre_post_update',
+            [ $this, 'prePostUpdateHandler' ],
+            0,
+            1
+        );
+
+        add_action(
             'wp2static_crawl',
             [ 'WP2StaticAdvancedCrawling\Crawler', 'wp2staticCrawl' ],
             15,
@@ -277,5 +284,13 @@ class Controller {
         global $wpdb;
 
         return $wpdb->get_col( 'SELECT NOW()' )[0];
+    }
+
+    public static function prePostUpdateHandler( int $post_id ) : void {
+        $permalink = get_permalink( $post_id );
+        if ( $permalink ) {
+            $post_url = wp_make_link_relative( $permalink );
+            CrawlQueue::clearCrawledTime( $post_url );
+        }
     }
 }
