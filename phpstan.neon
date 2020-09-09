@@ -8,5 +8,4 @@ parameters:
     paths:
         - %currentWorkingDirectory%/src/
     ignoreErrors:
-        - '#Call to static method l\(\) on an unknown class WP2Static\\WsLog.#'
-        - '#Call to static method ensure_index\(\) on an unknown class WP2Static\\Controller.#'
+        - '#Call to static method ensureIndex\(\) on an unknown class WP2Static\\Controller.#'

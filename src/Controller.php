@@ -52,7 +52,7 @@ class Controller {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
-        \WP2Static\Controller::ensure_index(
+        \WP2Static\Controller::ensureIndex(
             $table_name,
             'name',
             "CREATE UNIQUE INDEX name ON $table_name (name)"
@@ -69,7 +69,7 @@ class Controller {
             $wpdb->query( "ALTER TABLE $table_name ADD COLUMN crawled_time DATETIME" );
         }
 
-        \WP2Static\Controller::ensure_index(
+        \WP2Static\Controller::ensureIndex(
             $table_name,
             'crawled_time',
             "CREATE INDEX crawled_time ON $table_name (crawled_time)"
