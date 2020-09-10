@@ -21,7 +21,8 @@
     ],
     "require": {
         "php": ">=7.3",
-        "masterminds/html5": "^2.7"
+        "masterminds/html5": "^2.7",
+        "wa72/url": "^0.7.1"
     },
     "require-dev": {
         "phpstan/phpstan": "*",
