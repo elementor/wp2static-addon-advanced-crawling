@@ -9,6 +9,13 @@ class Controller {
             [ 'WP2StaticAdvancedCrawling\Controller', 'addSubmenuPage' ]
         );
 
+        add_filter(
+            'wp2static_modify_initial_crawl_list',
+            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticModifyInitialCrawlList' ],
+            15,
+            1
+        );
+
         add_action(
             'admin_post_wp2static_advanced_crawling_save_options',
             [ $this, 'saveOptionsFromUI' ],
