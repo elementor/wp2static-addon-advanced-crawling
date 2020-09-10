@@ -301,6 +301,9 @@ class Crawler {
         }
 
         $response = $this->request->getURL( $url, $handle );
+        if ( ! $response ) {
+            return null;
+        }
 
         $crawled_contents = $response['body'];
 
