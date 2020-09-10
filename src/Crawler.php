@@ -29,11 +29,11 @@ class Crawler {
         curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, 0 );
         curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, 0 );
         curl_setopt( $this->ch, CURLOPT_HEADER, 0 );
-        curl_setopt( $this->ch, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_setopt( $this->ch, CURLOPT_FOLLOWLOCATION, 0 );
         curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, 0 );
         curl_setopt( $this->ch, CURLOPT_TIMEOUT, 600 );
         curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 1 );
+        curl_setopt( $this->ch, CURLOPT_MAXREDIRS, 0 );
 
         $this->request = new \WP2Static\Request();
 
@@ -137,11 +137,17 @@ class Crawler {
                 $redirect_to = null;
 
                 if ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
-                    $redirect_to = (string) str_replace(
-                        $site_urls,
-                        '',
-                        $response['effective_url']
-                    );
+                    $location = self::getHeader( 'location', $response['headers'] );
+                    if ( $location ) {
+                        $redirect_to = (string) str_replace(
+                            $site_urls,
+                            '',
+                            $location
+                        );
+                    } else {
+                        $redirect_to = '/';
+                        WsLog::l( "No location found for redirect at $url" );
+                    }
                     $page_hash = md5( $response['code'] . $redirect_to );
                 } elseif ( ! is_null( $crawled_contents ) ) {
                     $page_hash = md5( $crawled_contents );
