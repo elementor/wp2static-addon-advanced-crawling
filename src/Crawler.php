@@ -6,6 +6,7 @@
 
 namespace WP2StaticAdvancedCrawling;
 
+use Wa72\Url\Url;
 use WP2Static\WsLog;
 
 class Crawler {
@@ -201,13 +202,12 @@ class Crawler {
     }
 
     /**
-     * Add and return parsed URLs to the provided array of URLs
+     * Add and parsed URLs to the provided array of URLs
      *
      * @param \DOMNode $node
      * @param array<string|true> $urls
-     * @return array<string|true>
      */
-    public static function parseURLsDOMNode( \DOMNode $node, array $urls ) : array {
+    public static function parseURLsDOMNode( \DOMNode $node, array &$urls ) : void {
         foreach ( $node->childNodes as $child ) {
             if ( $child instanceof \DOMElement ) {
                 $tag_name = strtolower( $child->tagName );
@@ -228,10 +228,9 @@ class Crawler {
                         $urls[ $child->getAttribute( 'src' ) ] = true;
                         break;
                 }
-                $urls = self::parseURLsDOMNode( $child, $urls );
+                self::parseURLsDOMNode( $child, $urls );
             }
         }
-        return $urls;
     }
 
     /**
@@ -243,7 +242,31 @@ class Crawler {
     public static function parseURLsHTML( string $html ) : array {
         $html5 = new \Masterminds\HTML5();
         $dom = $html5->loadHTML( $html );
-        return self::parseURLsDOMNode( $dom, [] );
+        $urls = [];
+        self::parseURLsDOMNode( $dom, $urls );
+        return $urls;
+    }
+
+    /**
+     * Add to crawl queue URLs matching $site_url, ignoring any others.
+     *
+     * @param Url $site_url
+     * @param array<string|true> $urls
+     */
+    public static function addToCrawlQueue( Url $site_url, array &$urls ) : void {
+        $site_host = $site_url->getHost();
+        $local_urls = [];
+
+        foreach ( array_keys( $urls ) as $s ) {
+            $url = Url::parse( $s );
+            if ( $url->equalsHost( $site_host ) || $url->equalsHost( '' ) ) {
+                if ( 0 < strlen( $url->getPath() ) ) {
+                    $local_urls[] = $url->getPath();
+                }
+            }
+        }
+
+        \WP2Static\CrawlQueue::addURLs( $local_urls );
     }
 
     /**
@@ -282,14 +305,15 @@ class Crawler {
             $site_path = rtrim( \WP2Static\SiteInfo::getURL( 'site' ), '/' );
             $url_slug = str_replace( $site_path, '', $url );
             WsLog::l( '404 for URL ' . $url_slug );
-            \WP2Static\CrawlCache::rmUrl( $url_slug );
             $response['body'] = null;
         } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
         } else {
             $content_type = self::getHeader( 'content-type', $response['headers'] );
             if ( $content_type && false !== stripos( $content_type, 'text/html' ) ) {
+                $site_url = Url::parse( \WP2Static\SiteInfo::getURL( 'site' ) );
                 $urls = self::parseURLsHTML( $response['body'] );
+                self::addToCrawlQueue( $site_url, $urls );
             }
         }
 
