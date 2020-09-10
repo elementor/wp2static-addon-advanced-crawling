@@ -13,7 +13,7 @@ class Detection {
     public static function wp2staticModifyInitialCrawlList( array $url_queue ) : array {
         if ( 1 === intval( Controller::getValue( 'detectRedirectionPluginURLs' ) ) ) {
             $redirection_urls = self::redirectionPluginURLs();
-            WsLog::l( count( $redirection_urls ) . ' redirects detected from Redirection plugin.' );
+            WsLog::l( count( $redirection_urls ) . ' URLs detected from Redirection plugin.' );
             $url_queue = array_merge( $url_queue, $redirection_urls );
         }
         return $url_queue;
@@ -32,7 +32,7 @@ class Detection {
         }
 
         $rows = $wpdb->get_results(
-            "SELECT url, action_data, regex FROM $table_name"
+            "SELECT url, action_data, regex FROM $table_name WHERE status='enabled'"
         );
 
         $urls = [];
