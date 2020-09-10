@@ -267,10 +267,11 @@ class Crawler {
 
         foreach ( array_keys( $urls ) as $s ) {
             $url = Url::parse( $s );
-            if ( $url->equalsHost( $site_host ) || $url->equalsHost( '' ) ) {
-                if ( 0 < strlen( $url->getPath() ) ) {
-                    $local_urls[] = $url->getPath();
-                }
+            $scheme = $url->getScheme();
+            if ( ( ! $scheme || 'http' === $scheme || 'https' === $scheme ) &&
+                 ( $url->equalsHost( $site_host ) || $url->equalsHost( '' ) ) &&
+                 0 < strlen( $url->getPath() ) ) {
+                $local_urls[] = $url->getPath();
             }
         }
 
