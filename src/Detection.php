@@ -12,7 +12,9 @@ class Detection {
      */
     public static function wp2staticModifyInitialCrawlList( array $url_queue ) : array {
         if ( 1 === intval( Controller::getValue( 'detectRedirectionPluginURLs' ) ) ) {
-            $url_queue = array_merge( $url_queue, self::redirectionPluginURLs() );
+            $redirection_urls = self::redirectionPluginURLs();
+            WsLog::l( count( $redirection_urls ) . ' redirects detected from Redirection plugin.' );
+            $url_queue = array_merge( $url_queue, $redirection_urls );
         }
         return $url_queue;
     }
