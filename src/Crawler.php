@@ -119,7 +119,12 @@ class Crawler {
         }
         while ( ! empty( $chunk ) ) {
             foreach ( $chunk as $root_relative_path ) {
-                $absolute_uri = new \WP2Static\URL( $site_path . $root_relative_path );
+                try {
+                    $absolute_uri = new \WP2Static\URL( $site_path . $root_relative_path );
+                } catch ( \WP2Static\WP2StaticException $e ) {
+                    WsLog::l("Error creating URL object for $site_path$root_relative_path");
+                    continue;
+                }
                 $url = $absolute_uri->get();
 
                 $response = $this->crawlURL( $url, $add_urls );
