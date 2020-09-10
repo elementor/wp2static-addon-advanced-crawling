@@ -155,6 +155,14 @@ class Controller {
             ''
         );
 
+        $queries[] = $wpdb->prepare(
+            $query_string,
+            'detectRedirectionPluginURLs',
+            '1',
+            'Detect Redirects from the <a href="https://redirection.me/">Redirection plugin</a>',
+            ''
+        );
+
         $wpdb->query( 'START TRANSACTION' );
         foreach ( $queries as $query ) {
             $wpdb->query( $query );
@@ -260,6 +268,12 @@ class Controller {
             $table_name,
             [ 'value' => isset( $_POST['crawlOnlyChangedURLs'] ) ? 1 : 0 ],
             [ 'name' => 'crawlOnlyChangedURLs' ]
+        );
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => isset( $_POST['detectRedirectionPluginURLs'] ) ? 1 : 0 ],
+            [ 'name' => 'detectRedirectionPluginURLs' ]
         );
 
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addon-advanced-crawling' ) );

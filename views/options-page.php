@@ -62,6 +62,23 @@
             </td>
         </tr>
 
+        <tr>
+            <td>
+                <label
+                    for="<?php echo $view['options']['detectRedirectionPluginURLs']->name; ?>"
+                ><?php echo $view['options']['detectRedirectionPluginURLs']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['detectRedirectionPluginURLs']->name; ?>"
+                    name="<?php echo $view['options']['detectRedirectionPluginURLs']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['options']['detectRedirectionPluginURLs']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
     </tbody>
 </table>
 </div>
