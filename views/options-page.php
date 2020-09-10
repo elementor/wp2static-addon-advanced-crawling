@@ -13,6 +13,23 @@
     <tbody>
 
         <tr>
+            <td>
+                <label
+                    for="<?php echo $view['options']['addURLsWhileCrawling']->name; ?>"
+                ><?php echo $view['options']['addURLsWhileCrawling']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['addURLsWhileCrawling']->name; ?>"
+                    name="<?php echo $view['options']['addURLsWhileCrawling']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['options']['addURLsWhileCrawling']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
+        <tr>
             <td style="width:50%;">
                 <label
                     for="<?php echo $view['options']['crawlChunkSize']->name; ?>"

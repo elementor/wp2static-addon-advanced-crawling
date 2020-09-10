@@ -93,6 +93,9 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
+        $add_urls = intval( Controller::getValue( 'addURLsWhileCrawling' ) ) !== 0;
+        WsLog::l( ( $add_urls ? 'Adding' : 'Not adding' ) . ' discovered URLs.' );
+
         $chunk_size = intval( Controller::getValue( 'crawlChunkSize' ) );
         if ( $chunk_size < 1 ) {
             $chunk_size = PHP_INT_MAX;
@@ -119,7 +122,7 @@ class Crawler {
                 $absolute_uri = new \WP2Static\URL( $site_path . $root_relative_path );
                 $url = $absolute_uri->get();
 
-                $response = $this->crawlURL( $url );
+                $response = $this->crawlURL( $url, $add_urls );
 
                 if ( ! $response ) {
                     continue;
@@ -290,7 +293,7 @@ class Crawler {
      *
      * @return mixed[]|null response object
      */
-    public function crawlURL( string $url ) : ?array {
+    public function crawlURL( string $url, bool $add_urls ) : ?array {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
@@ -308,7 +311,7 @@ class Crawler {
             $response['body'] = null;
         } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
-        } else {
+        } elseif ( $add_urls ) {
             $content_type = self::getHeader( 'content-type', $response['headers'] );
             if ( $content_type && false !== stripos( $content_type, 'text/html' ) ) {
                 $site_url = Url::parse( \WP2Static\SiteInfo::getURL( 'site' ) );

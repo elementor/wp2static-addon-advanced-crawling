@@ -126,6 +126,14 @@ class Controller {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'addURLsWhileCrawling',
+            '1',
+            'Add URLs Discovered While Crawling',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'crawlChunkSize',
             '20',
             'Crawl Chunk Size',
@@ -228,6 +236,12 @@ class Controller {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => isset( $_POST['addURLsWhileCrawling'] ) ? 1 : 0 ],
+            [ 'name' => 'addURLsWhileCrawling' ]
+        );
 
         $wpdb->update(
             $table_name,
