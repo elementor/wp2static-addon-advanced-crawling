@@ -102,6 +102,9 @@ class Crawler {
         }
         WsLog::l( "Crawling with a chunk size of $chunk_size" );
 
+        $crawl_sitemaps = intval( Controller::getValue( 'crawlSitemaps' ) ) !== 0;
+        WsLog::l( ( $crawl_sitemaps ? 'Crawling' : 'Not crawling' ) . ' sitemaps.' );
+
         $use_crawl_cache = apply_filters(
             'wp2static_use_crawl_cache',
             \WP2Static\CoreOptions::getValue( 'useCrawlCaching' )
@@ -127,7 +130,7 @@ class Crawler {
                 }
                 $url = $absolute_uri->get();
 
-                $response = $this->crawlURL( $url, $add_urls );
+                $response = $this->crawlURL( $url, $add_urls, $crawl_sitemaps );
 
                 if ( ! $response ) {
                     continue;
@@ -219,7 +222,7 @@ class Crawler {
     }
 
     /**
-     * Add and parsed URLs to the provided array of URLs
+     * Parse URLs and add to the provided array of URLs
      *
      * @param \DOMNode $node
      * @param array<string|true> $urls
@@ -261,6 +264,49 @@ class Crawler {
         $dom = $html5->loadHTML( $html );
         $urls = [];
         self::parseURLsDOMNode( $dom, $urls );
+        return $urls;
+    }
+
+    /**
+     * Parse URLs and add to the provided array of URLs
+     *
+     * @param \SimpleXMLElement $el
+     * @param array<string|true> $urls
+     */
+    public static function parseURLsSitemapElement( \SimpleXMLElement $el, array &$urls ) : void {
+        switch ( $el->getName() ) {
+            case 'loc':
+                $urls[ strval( $el ) ] = true;
+                break;
+            case 'sitemap':
+            case 'sitemapindex':
+            case 'url':
+            case 'urlset':
+                foreach ( $el as $child ) {
+                    self::parseURLsSitemapElement( $child, $urls );
+                }
+                break;
+        }
+    }
+
+    /**
+     * Return an array of URLs parsed from the provided XML sitemap, or an empty array
+     * if not a valid sitemap.
+     *
+     * @param string $xml
+     * @return array<string|true>
+     */
+    public static function parseURLsSitemap( string $xml ) : array {
+        libxml_use_internal_errors( true );
+        $el = simplexml_load_string( $xml );
+        libxml_use_internal_errors( false );
+        if ( false === $el ) {
+            WsLog::l( 'Error parsing XML.' );
+            return [];
+        }
+
+        $urls = [];
+        self::parseURLsSitemapElement( $el, $urls );
         return $urls;
     }
 
@@ -308,7 +354,7 @@ class Crawler {
      *
      * @return mixed[]|null response object
      */
-    public function crawlURL( string $url, bool $add_urls ) : ?array {
+    public function crawlURL( string $url, bool $add_urls, bool $crawl_sitemaps ) : ?array {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
@@ -319,7 +365,6 @@ class Crawler {
         if ( ! $response ) {
             return null;
         }
-
         $crawled_contents = $response['body'];
 
         if ( $response['code'] === 404 ) {
@@ -329,15 +374,23 @@ class Crawler {
             $response['body'] = null;
         } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
-        } elseif ( $add_urls ) {
+        } elseif ( $add_urls || $crawl_sitemaps ) {
             $content_type = self::getHeader( 'content-type', $response['headers'] );
-            if ( $content_type && false !== stripos( $content_type, 'text/html' ) ) {
+
+            if ( $content_type ) {
                 $site_url = Url::parse( \WP2Static\SiteInfo::getURL( 'site' ) );
-                $urls = self::parseURLsHTML( $response['body'] );
-                self::addToCrawlQueue( $site_url, $urls );
+                if ( $add_urls && false !== stripos( $content_type, 'text/html' ) ) {
+                    $urls = self::parseURLsHTML( $response['body'] );
+                    self::addToCrawlQueue( $site_url, $urls );
+                } elseif ( $crawl_sitemaps &&
+                           false !== stripos( $content_type, 'application/xml' ) ) {
+                    $urls = self::parseURLsSitemap( $response['body'] );
+                    self::addToCrawlQueue( $site_url, $urls );
+                }
             }
         }
 
         return $response;
     }
+
 }
