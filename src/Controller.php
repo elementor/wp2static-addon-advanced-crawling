@@ -157,6 +157,14 @@ class Controller {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'crawlSitemaps',
+            '1',
+            'Crawl Sitemaps',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'detectRedirectionPluginURLs',
             '1',
             'Detect Redirects from the <a href="https://redirection.me/">Redirection plugin</a>',
@@ -268,6 +276,12 @@ class Controller {
             $table_name,
             [ 'value' => isset( $_POST['crawlOnlyChangedURLs'] ) ? 1 : 0 ],
             [ 'name' => 'crawlOnlyChangedURLs' ]
+        );
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => isset( $_POST['crawlSitemaps'] ) ? 1 : 0 ],
+            [ 'name' => 'crawlSitemaps' ]
         );
 
         $wpdb->update(

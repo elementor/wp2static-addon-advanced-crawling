@@ -65,6 +65,23 @@
         <tr>
             <td>
                 <label
+                    for="<?php echo $view['options']['crawlSitemaps']->name; ?>"
+                ><?php echo $view['options']['crawlSitemaps']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['crawlSitemaps']->name; ?>"
+                    name="<?php echo $view['options']['crawlSitemaps']->name; ?>"
+                    value="1"
+                    type="checkbox"
+                    <?php echo (int) $view['options']['crawlSitemaps']->value === 1 ? 'checked' : ''; ?>
+                />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label
                     for="<?php echo $view['options']['detectRedirectionPluginURLs']->name; ?>"
                 ><?php echo $view['options']['detectRedirectionPluginURLs']->label; ?></label>
             </td>
