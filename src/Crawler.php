@@ -306,7 +306,23 @@ class Crawler {
         }
 
         $urls = [];
+
+        // Parse xml-stylesheet processing instructions.
+        $dom = dom_import_simplexml( $el );
+        if ( $dom ) {
+            foreach ( $dom->ownerDocument->childNodes as $child ) {
+                if ( XML_PI_NODE === $child->nodeType ) {
+                    $matches = [];
+                    $c = preg_match_all( '/href\=\"([^\"]+)\"/i', $child->textContent, $matches );
+                    if ( 0 < $c ) {
+                        $urls[ $matches[1][0] ] = true;
+                    }
+                }
+            }
+        }
+
         self::parseURLsSitemapElement( $el, $urls );
+
         return $urls;
     }
 
