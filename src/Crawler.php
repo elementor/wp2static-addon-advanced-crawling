@@ -144,6 +144,9 @@ class Crawler {
                             '',
                             $location
                         );
+                        if ( $add_urls ) {
+                            \WP2Static\CrawlQueue::addUrls( [ $redirect_to ] );
+                        }
                     } else {
                         $redirect_to = '/';
                         WsLog::l( "No location found for redirect at $url" );
