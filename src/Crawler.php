@@ -8,6 +8,7 @@ namespace WP2StaticAdvancedCrawling;
 
 use Wa72\Url\Url;
 use WP2Static\WsLog;
+use DOMDocument;
 
 class Crawler {
 
@@ -310,12 +311,19 @@ class Crawler {
         // Parse xml-stylesheet processing instructions.
         $dom = dom_import_simplexml( $el );
         if ( $dom ) {
-            foreach ( $dom->ownerDocument->childNodes as $child ) {
-                if ( XML_PI_NODE === $child->nodeType ) {
-                    $matches = [];
-                    $c = preg_match_all( '/href\=\"([^\"]+)\"/i', $child->textContent, $matches );
-                    if ( 0 < $c ) {
-                        $urls[ $matches[1][0] ] = true;
+            if ( $dom->ownerDocument instanceof DOMDocument ) {
+                foreach ( $dom->ownerDocument->childNodes as $child ) {
+                    if ( XML_PI_NODE === $child->nodeType ) {
+                        $matches = [];
+                        $c = preg_match_all(
+                            '/href\=\"([^\"]+)\"/i',
+                            $child->textContent,
+                            $matches
+                        );
+
+                        if ( 0 < $c ) {
+                            $urls[ $matches[1][0] ] = true;
+                        }
                     }
                 }
             }

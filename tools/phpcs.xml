@@ -38,13 +38,14 @@
   <rule ref="WordPress.NamingConventions.ValidVariableName">
     <properties>
       <property name="customPropertiesWhitelist" type="array">
-        <element value="parentNode"/>
-        <element value="nodeType"/>
-        <element value="nodeText"/>
-        <element value="textContent"/>
-        <element value="tagName"/>
-        <element value="firstChild"/>
         <element value="childNodes"/>
+        <element value="firstChild"/>
+        <element value="nodeText"/>
+        <element value="nodeType"/>
+        <element value="ownerDocument"/>
+        <element value="parentNode"/>
+        <element value="tagName"/>
+        <element value="textContent"/>
       </property>
     </properties>
   </rule>
