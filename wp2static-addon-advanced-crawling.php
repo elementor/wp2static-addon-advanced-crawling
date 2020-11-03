@@ -4,7 +4,7 @@
  * Plugin Name:       WP2Static Add-on: Advanced Crawling Options
  * Plugin URI:        https://wp2static.com
  * Description:       Advanced Crawling add-on for WP2Static.
- * Version:           1.0-alpha-002
+ * Version:           1.0-alpha-003
  * Author:            Leon Stafford
  * Author URI:        https://ljs.dev
  * License:           Unlicense
@@ -17,7 +17,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'WP2STATIC_ADVANCED_CRAWLING_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WP2STATIC_ADVANCED_CRAWLING_VERSION', '1.0-alpha-002' );
+define( 'WP2STATIC_ADVANCED_CRAWLING_VERSION', '1.0-alpha-003' );
 
 if ( file_exists( WP2STATIC_ADVANCED_CRAWLING_PATH . 'vendor/autoload.php' ) ) {
     require_once WP2STATIC_ADVANCED_CRAWLING_PATH . 'vendor/autoload.php';

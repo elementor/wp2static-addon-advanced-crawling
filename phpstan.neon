@@ -7,8 +7,9 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     paths:
         - %currentWorkingDirectory%/src/
-    scanDirectories:
-        - ../wp2static/src/
+    scanFiles:
+        - %currentWorkingDirectory%/tests/phpstan/bootstrap.php
+        - %currentWorkingDirectory%/tests/phpstan/wp-cli-stubs-2.2.0.php
     ignoreErrors:
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
         - '#Constant WP2STATIC_REDIRECT_CODES not found#'
