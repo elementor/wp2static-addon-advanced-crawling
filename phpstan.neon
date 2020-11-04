@@ -13,12 +13,4 @@ parameters:
     ignoreErrors:
         - '#[a-zA-Z0-9\\_]+superglobal[a-zA-Z0-9\\_]+#'
         - '#Constant WP2STATIC_REDIRECT_CODES not found#'
-        - '#Call to static method l\(\) on an unknown class WP2Static\\WsLog.#'
-        - '#Call to static method getValue\(\) on an unknown class WP2Static\\CoreOptions.#'
-        - '#Call to static method getURL\(\) on an unknown class WP2Static\\SiteInfo.#'
-        - '#Call to static method get\(\) on an unknown class WP2Static\\URL.#'
-        - '#Call to static method addUrls\(\) on an unknown class WP2Static\\CrawlQueue.#'
-        - '#Call to static method getUrl\(\) on an unknown class WP2Static\\CrawlCache.#'
-        - '#Call to static method add\(\) on an unknown class WP2Static\\StaticSite.#'
-        - '#Call to static method ensureIndex\(\) on an unknown class WP2Static\\Controller.#'
 

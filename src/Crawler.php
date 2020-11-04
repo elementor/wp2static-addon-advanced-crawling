@@ -8,6 +8,7 @@ namespace WP2StaticAdvancedCrawling;
 
 use Wa72\Url\Url;
 use WP2Static\WsLog;
+use WP2Static\Request;
 use DOMDocument;
 
 class Crawler {

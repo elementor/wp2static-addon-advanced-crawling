@@ -26,6 +26,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "*",
+        "leonstafford/wp2static": "*",
         "thecodingmachine/phpstan-strict-rules": "*",
         "szepeviktor/phpstan-wordpress": "*",
         "squizlabs/php_codesniffer": "*",
