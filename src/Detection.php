@@ -7,6 +7,22 @@ use \WP2Static\WsLog;
 class Detection {
 
     /**
+     * @param array<string> $filenames
+     * @return array<string>
+     */
+    public static function wp2staticFilenamesToIgnore( array $filenames ) : array {
+        return preg_split( '/\r\n|\r|\n/', Controller::getBlobValue( 'filenamesToIgnore' ) );
+    }
+
+    /**
+     * @param array<string> $extensions
+     * @return array<string>
+     */
+    public static function wp2staticFileExtensionsToIgnore( array $extensions ) : array {
+        return preg_split( '/\r\n|\r|\n/', Controller::getBlobValue( 'fileExtensionsToIgnore' ) );
+    }
+
+    /**
      * @param array<string> $url_queue
      * @return array<string>
      */

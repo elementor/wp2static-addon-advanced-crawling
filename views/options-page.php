@@ -96,6 +96,38 @@
             </td>
         </tr>
 
+        <tr>
+            <td>
+                <label
+                    for="<?php echo $view['options']['filenamesToIgnore']->name; ?>"
+                ><?php echo $view['options']['filenamesToIgnore']->label; ?></label>
+            </td>
+            <td>
+                <textarea
+                    id="<?php echo $view['options']['filenamesToIgnore']->name; ?>"
+                    name="<?php echo $view['options']['filenamesToIgnore']->name; ?>"
+                    cols=30
+                    rows=10
+                ><?php echo $view['options']['filenamesToIgnore']->blob_value; ?></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label
+                    for="<?php echo $view['options']['fileExtensionsToIgnore']->name; ?>"
+                ><?php echo $view['options']['fileExtensionsToIgnore']->label; ?></label>
+            </td>
+            <td>
+                <textarea
+                    id="<?php echo $view['options']['fileExtensionsToIgnore']->name; ?>"
+                    name="<?php echo $view['options']['fileExtensionsToIgnore']->name; ?>"
+                    cols=30
+                    rows=10
+                ><?php echo $view['options']['fileExtensionsToIgnore']->blob_value; ?></textarea>
+            </td>
+        </tr>
+
     </tbody>
 </table>
 </div>

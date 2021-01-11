@@ -10,6 +10,20 @@ class Controller {
         );
 
         add_filter(
+            'wp2static_file_extensions_to_ignore',
+            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticFileExtensionsToIgnore' ],
+            15,
+            1
+        );
+
+        add_filter(
+            'wp2static_filenames_to_ignore',
+            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticFilenamesToIgnore' ],
+            15,
+            1
+        );
+
+        add_filter(
             'wp2static_modify_initial_crawl_list',
             [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticModifyInitialCrawlList' ],
             15,
@@ -67,6 +81,7 @@ class Controller {
             value VARCHAR(255) NOT NULL,
             label VARCHAR(255) NULL,
             description VARCHAR(255) NULL,
+            blob_value BLOB NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
@@ -167,8 +182,30 @@ class Controller {
             $query_string,
             'detectRedirectionPluginURLs',
             '1',
-            'Detect Redirects from the <a href="https://redirection.me/">Redirection plugin</a>',
+            'Detect Redirects from the <a href="https://redirection.me/">Redirection Plugin</a>',
             ''
+        );
+
+        $blob_query_string =
+            "INSERT IGNORE INTO $table_name (name, value, label, description, blob_value) " .
+            'VALUES (%s, %s, %s, %s, %s);';
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
+            'filenamesToIgnore',
+            '1',
+            'Filenames to Ignore',
+            '',
+            "__MACOSX\n.babelrc\n.git\n.gitignore\n.gitkeep\n.htaccess\n.php\n.svn\n.travis.yml\nbackwpup\nbower_components\nbower.json\ncomposer.json\ncomposer.lock\nconfig.rb\ncurrent-export\nDockerfile\ngulpfile.js\nlatest-export\nLICENSE\nMakefile\nnode_modules\npackage.json\npb_backupbuddy\nplugins/wp2static\nprevious-export\nREADME\nstatic-html-output-plugin\n/tests/\nthumbs.db\ntinymce\nwc-logs\nwpallexport\nwpallimport\nwp-static-html-output\nwp2static-addon\nwp2static-crawled-site\nwp2static-processed-site\nwp2static-working-files\nyarn-error.log\nyarn.lock"
+        );
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
+            'fileExtensionsToIgnore',
+            '1',
+            'File Extensions to Ignore',
+            '',
+            ".bat\n.crt\n.DS_Store\n.git\n.idea\n.ini\n.less\n.map\n.md\n.mo\n.php\n.PHP\n.phtml\n.po\n.pot\n.scss\n.sh\n.sql\n.SQL\n.tar.gz\n.tpl\n.txt\n.yarn\n.zip"
         );
 
         $wpdb->query( 'START TRANSACTION' );
@@ -290,8 +327,45 @@ class Controller {
             [ 'name' => 'detectRedirectionPluginURLs' ]
         );
 
+        $wpdb->update(
+            $table_name,
+            [ 'blob_value' => $_POST['filenamesToIgnore'] ],
+            [ 'name' => 'filenamesToIgnore' ]
+        );
+
+        $wpdb->update(
+            $table_name,
+            [ 'blob_value' => $_POST['fileExtensionsToIgnore'] ],
+            [ 'name' => 'fileExtensionsToIgnore' ]
+        );
+
         wp_safe_redirect( admin_url( 'admin.php?page=wp2static-addon-advanced-crawling' ) );
         exit;
+    }
+
+
+    /**
+     * Get option BLOB value
+     *
+     * @return string option BLOB value
+     */
+    public static function getBlobValue( string $name ) : string {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
+
+        $sql = $wpdb->prepare(
+            "SELECT blob_value FROM $table_name WHERE" . ' name = %s LIMIT 1',
+            $name
+        );
+
+        $option_value = $wpdb->get_var( $sql );
+
+        if ( ! is_string( $option_value ) ) {
+            return '';
+        }
+
+        return $option_value;
     }
 
     /**
