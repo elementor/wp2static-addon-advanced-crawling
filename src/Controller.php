@@ -203,7 +203,9 @@ class Controller {
             '1',
             'Filenames to Ignore',
             '',
+            // @codingStandardsIgnoreStart
             "__MACOSX\n.babelrc\n.git\n.gitignore\n.gitkeep\n.htaccess\n.php\n.svn\n.travis.yml\nbackwpup\nbower_components\nbower.json\ncomposer.json\ncomposer.lock\nconfig.rb\ncurrent-export\nDockerfile\ngulpfile.js\nlatest-export\nLICENSE\nMakefile\nnode_modules\npackage.json\npb_backupbuddy\nplugins/wp2static\nprevious-export\nREADME\nstatic-html-output-plugin\n/tests/\nthumbs.db\ntinymce\nwc-logs\nwpallexport\nwpallimport\nwp-static-html-output\nwp2static-addon\nwp2static-crawled-site\nwp2static-processed-site\nwp2static-working-files\nyarn-error.log\nyarn.lock"
+            // @codingStandardsIgnoreEnd
         );
 
         $queries[] = $wpdb->prepare(
@@ -212,7 +214,9 @@ class Controller {
             '1',
             'File Extensions to Ignore',
             '',
+            // @codingStandardsIgnoreStart
             ".bat\n.crt\n.DS_Store\n.git\n.idea\n.ini\n.less\n.map\n.md\n.mo\n.php\n.PHP\n.phtml\n.po\n.pot\n.scss\n.sh\n.sql\n.SQL\n.tar.gz\n.tpl\n.txt\n.yarn\n.zip"
+            // @codingStandardsIgnoreEnd
         );
 
         $wpdb->query( 'START TRANSACTION' );
