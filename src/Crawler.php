@@ -350,7 +350,8 @@ class Crawler {
             $scheme = $url->getScheme();
             if ( ( ! $scheme || 'http' === $scheme || 'https' === $scheme ) &&
                  ( $url->equalsHost( $site_host ) || $url->equalsHost( '' ) ) &&
-                 0 < strlen( $url->getPath() ) ) {
+                 0 < strlen( $url->getPath() ) &&
+                 \WP2Static\FilesHelper::filePathLooksCrawlable( $s ) ) {
                 $local_urls[] = $url->getPath();
             }
         }
