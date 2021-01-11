@@ -6,6 +6,10 @@ use \WP2Static\WsLog;
 
 class Detection {
 
+    public function wp2staticDetect() : void {
+        \WP2StaticAdvancedCrawling\Controller::activateForSingleSite();
+    }
+
     /**
      * @param array<string> $filenames
      * @return array<string>

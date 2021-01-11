@@ -83,6 +83,8 @@ class Crawler {
      * Crawls URLs in WordPressSite, saving them to StaticSite
      */
     public function crawlSite( string $static_site_path ) : void {
+        \WP2StaticAdvancedCrawling\Controller::activateForSingleSite();
+
         $crawled = 0;
         $cache_hits = 0;
         $crawl_start_time = Controller::dbNow();

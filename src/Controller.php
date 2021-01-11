@@ -58,6 +58,13 @@ class Controller {
             2
         );
 
+        add_action(
+            'wp2static_detect',
+            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticDetect' ],
+            15,
+            2
+        );
+
         do_action(
             'wp2static_register_addon',
             'wp2static-addon-advanced-crawling',
