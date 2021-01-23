@@ -14,7 +14,7 @@ use DOMDocument;
 class Crawler {
 
     /**
-     * @var resource | bool
+     * @var resource | bool | \CurlHandle
      */
     private $ch;
     /**
