@@ -199,6 +199,15 @@ class Controller {
 
         $queries[] = $wpdb->prepare(
             $blob_query_string,
+            'additionalPathsToCrawl',
+            '1',
+            'Additional Paths to Crawl',
+            '',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
             'filenamesToIgnore',
             '1',
             'Filenames to Ignore',
@@ -307,6 +316,12 @@ class Controller {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
+
+        $wpdb->update(
+            $table_name,
+            [ 'blob_value' => $_POST['additionalPathsToCrawl'] ],
+            [ 'name' => 'additionalPathsToCrawl' ]
+        );
 
         $wpdb->update(
             $table_name,

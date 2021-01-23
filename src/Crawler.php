@@ -97,6 +97,13 @@ class Crawler {
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
+        $additional_paths = [ '/' => true ];
+        foreach ( self::wp2staticAdditionalPathsToCrawl() as $path ) {
+            $additional_paths[ $path ] = true;
+        }
+        WsLog::l( count( $additional_paths ) . ' additional paths added.' );
+        self::addToCrawlQueue( Url::parse( $site_urls[1] ), $additional_paths );
+
         $add_urls = intval( Controller::getValue( 'addURLsWhileCrawling' ) ) !== 0;
         WsLog::l( ( $add_urls ? 'Adding' : 'Not adding' ) . ' discovered URLs.' );
 
@@ -419,6 +426,22 @@ class Crawler {
         }
 
         return $response;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function wp2staticAdditionalPathsToCrawl() : array {
+        $paths = preg_split(
+            '/\r\n|\r|\n/',
+            Controller::getBlobValue( 'additionalPathsToCrawl' )
+        );
+
+        if ( ! $paths ) {
+            return [];
+        }
+
+        return $paths;
     }
 
 }

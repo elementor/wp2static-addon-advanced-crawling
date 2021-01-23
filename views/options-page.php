@@ -15,6 +15,22 @@
         <tr>
             <td>
                 <label
+                    for="<?php echo $view['options']['additionalPathsToCrawl']->name; ?>"
+                ><?php echo $view['options']['additionalPathsToCrawl']->label; ?></label>
+            </td>
+            <td>
+                <textarea
+                    id="<?php echo $view['options']['additionalPathsToCrawl']->name; ?>"
+                    name="<?php echo $view['options']['additionalPathsToCrawl']->name; ?>"
+                    cols=30
+                    rows=10
+                ><?php echo $view['options']['additionalPathsToCrawl']->blob_value; ?></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label
                     for="<?php echo $view['options']['addURLsWhileCrawling']->name; ?>"
                 ><?php echo $view['options']['addURLsWhileCrawling']->label; ?></label>
             </td>
