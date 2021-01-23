@@ -23,7 +23,7 @@ if ( file_exists( WP2STATIC_ADVANCED_CRAWLING_PATH . 'vendor/autoload.php' ) ) {
     require_once WP2STATIC_ADVANCED_CRAWLING_PATH . 'vendor/autoload.php';
 }
 
-function run_wp2static_addon_advanced_crawling() {
+function run_wp2static_addon_advanced_crawling() : void {
     $controller = new WP2StaticAdvancedCrawling\Controller();
     $controller->run();
 }
