@@ -31,6 +31,41 @@ class Controller {
         );
 
         add_action(
+            'wp2static_process_html',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_css',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_js',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_robots_txt',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_xml',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
             'admin_post_wp2static_advanced_crawling_save_options',
             [ $this, 'saveOptionsFromUI' ],
             15,
@@ -199,6 +234,15 @@ class Controller {
 
         $queries[] = $wpdb->prepare(
             $blob_query_string,
+            'additionalHostsToRewrite',
+            '1',
+            'Additional Hosts to Rewrite',
+            '',
+            ''
+        );
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
             'additionalPathsToCrawl',
             '1',
             'Additional Paths to Crawl',
@@ -316,6 +360,12 @@ class Controller {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
+
+        $wpdb->update(
+            $table_name,
+            [ 'blob_value' => $_POST['additionalHostsToRewrite'] ],
+            [ 'name' => 'additionalHostsToRewrite' ]
+        );
 
         $wpdb->update(
             $table_name,

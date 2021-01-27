@@ -15,6 +15,22 @@
         <tr>
             <td>
                 <label
+                    for="<?php echo $view['options']['additionalHostsToRewrite']->name; ?>"
+                ><?php echo $view['options']['additionalHostsToRewrite']->label; ?></label>
+            </td>
+            <td>
+                <textarea
+                    id="<?php echo $view['options']['additionalHostsToRewrite']->name; ?>"
+                    name="<?php echo $view['options']['additionalHostsToRewrite']->name; ?>"
+                    cols=30
+                    rows=10
+                ><?php echo $view['options']['additionalHostsToRewrite']->blob_value; ?></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label
                     for="<?php echo $view['options']['additionalPathsToCrawl']->name; ?>"
                 ><?php echo $view['options']['additionalPathsToCrawl']->label; ?></label>
             </td>
