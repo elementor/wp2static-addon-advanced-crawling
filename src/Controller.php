@@ -31,6 +31,41 @@ class Controller {
         );
 
         add_action(
+            'wp2static_process_html',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_css',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_js',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_robots_txt',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
+            'wp2static_process_xml',
+            [ Rewriter::class, 'rewrite' ],
+            100,
+            1
+        );
+
+        add_action(
             'admin_post_wp2static_advanced_crawling_save_options',
             [ $this, 'saveOptionsFromUI' ],
             15,
@@ -84,7 +119,7 @@ class Controller {
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name VARCHAR(255) NOT NULL,
+            name VARCHAR(191) NOT NULL,
             value VARCHAR(255) NOT NULL,
             label VARCHAR(255) NULL,
             description VARCHAR(255) NULL,
@@ -196,6 +231,15 @@ class Controller {
         $blob_query_string =
             "INSERT IGNORE INTO $table_name (name, value, label, description, blob_value) " .
             'VALUES (%s, %s, %s, %s, %s);';
+
+        $queries[] = $wpdb->prepare(
+            $blob_query_string,
+            'additionalHostsToRewrite',
+            '1',
+            'Additional Hosts to Rewrite',
+            '',
+            ''
+        );
 
         $queries[] = $wpdb->prepare(
             $blob_query_string,
@@ -319,6 +363,12 @@ class Controller {
 
         $wpdb->update(
             $table_name,
+            [ 'blob_value' => $_POST['additionalHostsToRewrite'] ],
+            [ 'name' => 'additionalHostsToRewrite' ]
+        );
+
+        $wpdb->update(
+            $table_name,
             [ 'blob_value' => $_POST['additionalPathsToCrawl'] ],
             [ 'name' => 'additionalPathsToCrawl' ]
         );
@@ -369,7 +419,6 @@ class Controller {
         exit;
     }
 
-
     /**
      * Get option BLOB value
      *
@@ -392,6 +441,22 @@ class Controller {
         }
 
         return $option_value;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
     }
 
     /**
