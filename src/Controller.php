@@ -369,7 +369,6 @@ class Controller {
         exit;
     }
 
-
     /**
      * Get option BLOB value
      *
@@ -392,6 +391,22 @@ class Controller {
         }
 
         return $option_value;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getLineDelimitedBlobValue( string $name ) : array {
+        $vals = preg_split(
+            '/\r\n|\r|\n/',
+            self::getBlobValue( $name )
+        );
+
+        if ( ! $vals ) {
+            return [];
+        }
+
+        return $vals;
     }
 
     /**

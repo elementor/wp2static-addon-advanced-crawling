@@ -15,16 +15,7 @@ class Detection {
      * @return array<string|int>
      */
     public static function wp2staticFilenamesToIgnore( array $filenames ) : array {
-        $filenames = preg_split(
-            '/\r\n|\r|\n/',
-            Controller::getBlobValue( 'filenamesToIgnore' )
-        );
-
-        if ( ! $filenames ) {
-            return [];
-        }
-
-        return $filenames;
+        return Controller::getLineDelimitedBlobValue( 'filenamesToIgnore' );
     }
 
     /**
@@ -32,16 +23,7 @@ class Detection {
      * @return array<string|int>
      */
     public static function wp2staticFileExtensionsToIgnore( array $extensions ) : array {
-        $extensions = preg_split(
-            '/\r\n|\r|\n/',
-            Controller::getBlobValue( 'fileExtensionsToIgnore' )
-        );
-
-        if ( ! $extensions ) {
-            return [];
-        }
-
-        return $extensions;
+        return Controller::getLineDelimitedBlobValue( 'fileExtensionsToIgnore' );
     }
 
     /**

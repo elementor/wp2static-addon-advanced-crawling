@@ -98,7 +98,7 @@ class Crawler {
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
         $additional_paths = [ '/' => true ];
-        foreach ( self::wp2staticAdditionalPathsToCrawl() as $path ) {
+        foreach ( Controller::getLineDelimitedBlobValue( 'additionalPathsToCrawl' ) as $path ) {
             $additional_paths[ $path ] = true;
         }
         WsLog::l( count( $additional_paths ) . ' additional paths added.' );
@@ -426,22 +426,6 @@ class Crawler {
         }
 
         return $response;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public static function wp2staticAdditionalPathsToCrawl() : array {
-        $paths = preg_split(
-            '/\r\n|\r|\n/',
-            Controller::getBlobValue( 'additionalPathsToCrawl' )
-        );
-
-        if ( ! $paths ) {
-            return [];
-        }
-
-        return $paths;
     }
 
 }
