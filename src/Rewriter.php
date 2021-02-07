@@ -52,16 +52,18 @@ class Rewriter {
         $hosts = Controller::getLineDelimitedBlobValue( 'additionalHostsToRewrite' );
 
         foreach ( $hosts as $host ) {
-            $host_rel = URLHelper::getProtocolRelativeURL( 'http://' . $host );
+            if ( $host ) {
+                $host_rel = URLHelper::getProtocolRelativeURL( 'http://' . $host );
 
-            $search_patterns[] = 'http://' . $host;
-            $search_patterns[] = 'https:// ' . $host;
-            $search_patterns[] = $host_rel;
-            $search_patterns[] = addcslashes( $host_rel, '/' );
-            $replace_patterns[] = $destination_url;
-            $replace_patterns[] = $destination_url;
-            $replace_patterns[] = $destination_url_rel;
-            $replace_patterns[] = $destination_url_rel_cslashes;
+                $search_patterns[] = 'http://' . $host;
+                $search_patterns[] = 'https:// ' . $host;
+                $search_patterns[] = $host_rel;
+                $search_patterns[] = addcslashes( $host_rel, '/' );
+                $replace_patterns[] = $destination_url;
+                $replace_patterns[] = $destination_url;
+                $replace_patterns[] = $destination_url_rel;
+                $replace_patterns[] = $destination_url_rel_cslashes;
+            }
         }
 
         $rewritten_contents = str_replace(
