@@ -113,6 +113,11 @@ class Crawler {
         }
         WsLog::l( "Crawling with a chunk size of $chunk_size" );
 
+        $progress_report_interval = intval( Controller::getValue( 'crawlProgressReportInterval' ) );
+        if ( $progress_report_interval < 1 ) {
+            $progress_report_interval = PHP_INT_MAX;
+        }
+
         $crawl_sitemaps = intval( Controller::getValue( 'crawlSitemaps' ) ) !== 0;
         WsLog::l( ( $crawl_sitemaps ? 'Crawling' : 'Not crawling' ) . ' sitemaps.' );
 
@@ -204,7 +209,7 @@ class Crawler {
                 );
 
                 // incrementally log crawl progress
-                if ( $crawled % 300 === 0 ) {
+                if ( $crawled % $progress_report_interval === 0 ) {
                     $notice = "Crawling progress: $crawled crawled, $cache_hits skipped (cached).";
                     WsLog::l( $notice );
                 }
