@@ -91,7 +91,9 @@ class Crawler {
 
         WsLog::l( 'Starting to crawl detected URLs.' );
 
-        $site_path = rtrim( \WP2Static\SiteInfo::getURL( 'site' ), '/' );
+        $site_url = \WP2Static\SiteInfo::getURL( 'site' );
+        $site_path = rtrim( $site_url, '/' );
+        $site_url = Url::parse( $site_url );
         $site_host = parse_url( $site_path, PHP_URL_HOST );
         $site_port = parse_url( $site_path, PHP_URL_PORT );
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
@@ -177,6 +179,14 @@ class Crawler {
                     if ( \WP2Static\CrawlCache::getUrl( $root_relative_path, $page_hash ) ) {
                         $cache_hits++;
                         continue;
+                    }
+                }
+
+                if ( $response['urls'] && count( $response['urls'] ) ) {
+                    if ( $crawl_only_changed ) {
+                        self::addToCrawlQueue( $site_url, $response['urls'], $crawl_start_time );
+                    } else {
+                        self::addToCrawlQueue( $site_url, $response['urls'] );
                     }
                 }
 
@@ -350,7 +360,9 @@ class Crawler {
      * @param Url $site_url
      * @param array<string|true> $urls
      */
-    public static function addToCrawlQueue( Url $site_url, array &$urls ) : void {
+    public static function addToCrawlQueue(
+        Url $site_url, array &$urls, ?string $crawl_start_time = null
+    ) : void {
         $site_host = $site_url->getHost();
         $local_urls = [];
 
@@ -365,7 +377,12 @@ class Crawler {
             }
         }
 
-        \WP2Static\CrawlQueue::addURLs( $local_urls );
+        if ( count( $local_urls ) ) {
+            \WP2Static\CrawlQueue::addURLs( $local_urls );
+            if ( $crawl_start_time ) {
+                CrawlQueue::updateCrawledTimes( $local_urls, $crawl_start_time, true );
+            }
+        }
     }
 
     /**
@@ -389,7 +406,7 @@ class Crawler {
      *
      * @return mixed[]|null response object
      */
-    public function crawlURL( string $url, bool $add_urls, bool $crawl_sitemaps ) : ?array {
+    public function crawlURL( string $url, bool $parse_urls, bool $crawl_sitemaps ) : ?array {
         $handle = $this->ch;
 
         if ( ! is_resource( $handle ) ) {
@@ -409,18 +426,15 @@ class Crawler {
             $response['body'] = null;
         } elseif ( in_array( $response['code'], WP2STATIC_REDIRECT_CODES ) ) {
             $response['body'] = null;
-        } elseif ( $add_urls || $crawl_sitemaps ) {
+        } elseif ( $parse_urls || $crawl_sitemaps ) {
             $content_type = self::getHeader( 'content-type', $response['headers'] );
 
             if ( $content_type ) {
-                $site_url = Url::parse( \WP2Static\SiteInfo::getURL( 'site' ) );
-                if ( $add_urls && false !== stripos( $content_type, 'text/html' ) ) {
-                    $urls = self::parseURLsHTML( $response['body'] );
-                    self::addToCrawlQueue( $site_url, $urls );
+                if ( $parse_urls && false !== stripos( $content_type, 'text/html' ) ) {
+                    $response['urls'] = self::parseURLsHTML( $response['body'] );
                 } elseif ( $crawl_sitemaps &&
                            false !== stripos( $content_type, 'application/xml' ) ) {
-                    $urls = self::parseURLsSitemap( $response['body'] );
-                    self::addToCrawlQueue( $site_url, $urls );
+                    $response['urls'] = self::parseURLsSitemap( $response['body'] );
                 }
             }
         }
