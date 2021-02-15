@@ -95,6 +95,22 @@
         </tr>
 
         <tr>
+            <td style="width:50%;">
+                <label
+                    for="<?php echo $view['options']['crawlProgressReportInterval']->name; ?>"
+                ><?php echo $view['options']['crawlProgressReportInterval']->label; ?></label>
+            </td>
+            <td>
+                <input
+                    id="<?php echo $view['options']['crawlProgressReportInterval']->name; ?>"
+                    name="<?php echo $view['options']['crawlProgressReportInterval']->name; ?>"
+                    type="text"
+                    value="<?php echo $view['options']['crawlProgressReportInterval']->value !== '' ? $view['options']['crawlProgressReportInterval']->value : '20'; ?>"
+                />
+            </td>
+        </tr>
+
+        <tr>
             <td>
                 <label
                     for="<?php echo $view['options']['crawlSitemaps']->name; ?>"

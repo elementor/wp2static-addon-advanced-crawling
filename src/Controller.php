@@ -214,6 +214,14 @@ class Controller {
 
         $queries[] = $wpdb->prepare(
             $query_string,
+            'crawlProgressReportInterval',
+            '300',
+            'Crawl Progress Report Interval',
+            'Report crawl progress after this many URLs are crawled.'
+        );
+
+        $queries[] = $wpdb->prepare(
+            $query_string,
             'crawlSitemaps',
             '1',
             'Crawl Sitemaps',
@@ -389,6 +397,12 @@ class Controller {
             $table_name,
             [ 'value' => isset( $_POST['crawlOnlyChangedURLs'] ) ? 1 : 0 ],
             [ 'name' => 'crawlOnlyChangedURLs' ]
+        );
+
+        $wpdb->update(
+            $table_name,
+            [ 'value' => intval( $_POST['crawlProgressReportInterval'] ) ],
+            [ 'name' => 'crawlProgressReportInterval' ]
         );
 
         $wpdb->update(
