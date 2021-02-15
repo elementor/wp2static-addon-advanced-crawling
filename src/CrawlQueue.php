@@ -21,20 +21,41 @@ class CrawlQueue {
     }
 
     /**
-     * Set crawled_time to NOW() for each URL.
+     * Set crawled_time to NOW() for each URL, or null if $set_null is true
      *
      * @param string[] $urls List of URLs.
+     * @param ?string $crawl_start_time Crawl start time in MySQL datetime format.
+     * @param bool $set_null Set to NULL rather than NOW().
      */
-    public static function updateCrawledTimes( array $urls ) : void {
+    public static function updateCrawledTimes(
+        array $urls, ?string $crawl_start_time = null, bool $set_null = false
+    ) : void {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wp2static_urls';
         $wpdb->query( 'START TRANSACTION' );
+
         foreach ( $urls as $url ) {
-            $query = $wpdb->prepare(
-                "UPDATE $table_name SET crawled_time = NOW() WHERE url = %s",
-                $url
-            );
+            if ( $crawl_start_time ) {
+                if ( $set_null ) {
+                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s " .
+                        'AND crawled_time <= %s';
+                } else {
+                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s" .
+                        ' AND (crawled_time IS NULL OR crawled_time <= %s)';
+                }
+                 $query = $wpdb->prepare( $query_str, $url, $crawl_start_time );
+            } else {
+                if ( $set_null ) {
+                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s";
+                } else {
+                    $query_str = "UPDATE $table_name SET crawled_time = NOW() WHERE url = %s";
+                }
+                $query = $wpdb->prepare(
+                    $query_str,
+                    $url
+                );
+            }
             $wpdb->query( $query );
         }
         $wpdb->query( 'COMMIT' );
