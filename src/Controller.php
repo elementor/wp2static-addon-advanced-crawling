@@ -6,7 +6,7 @@ class Controller {
     public function run() : void {
         add_filter(
             'wp2static_add_menu_items',
-            [ Controller::class, 'addSubmenuPage' ]
+            [ self::class, 'addSubmenuPage' ]
         );
 
         add_filter(
