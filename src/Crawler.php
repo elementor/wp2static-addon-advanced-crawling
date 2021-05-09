@@ -104,7 +104,7 @@ class Crawler {
             $additional_paths[ $path ] = true;
         }
         WsLog::l( count( $additional_paths ) . ' additional paths added.' );
-        self::addToCrawlQueue( Url::parse( $site_urls[1] ), $additional_paths );
+        self::addToCrawlQueue( $site_url, $site_url, $additional_paths );
 
         $add_urls = intval( Controller::getValue( 'addURLsWhileCrawling' ) ) !== 0;
         WsLog::l( ( $add_urls ? 'Adding' : 'Not adding' ) . ' discovered URLs.' );
@@ -188,10 +188,16 @@ class Crawler {
                 }
 
                 if ( $response['urls'] && count( $response['urls'] ) ) {
+                    $page_url = Url::parse( $url );
                     if ( $crawl_only_changed ) {
-                        self::addToCrawlQueue( $site_url, $response['urls'], $crawl_start_time );
+                        self::addToCrawlQueue(
+                            $site_url,
+                            $page_url,
+                            $response['urls'],
+                            $crawl_start_time
+                        );
                     } else {
-                        self::addToCrawlQueue( $site_url, $response['urls'] );
+                        self::addToCrawlQueue( $site_url, $page_url, $response['urls'] );
                     }
                 }
 
@@ -366,7 +372,7 @@ class Crawler {
      * @param array<string|true> $urls
      */
     public static function addToCrawlQueue(
-        Url $site_url, array &$urls, ?string $crawl_start_time = null
+        Url $site_url, Url $page_url, array &$urls, ?string $crawl_start_time = null
     ) : void {
         $site_host = $site_url->getHost();
         $local_urls = [];
@@ -374,11 +380,18 @@ class Crawler {
         foreach ( array_keys( $urls ) as $s ) {
             $url = Url::parse( $s );
             $scheme = $url->getScheme();
-            if ( ( ! $scheme || 'http' === $scheme || 'https' === $scheme ) &&
-                 ( $url->equalsHost( $site_host ) || $url->equalsHost( '' ) ) &&
-                 0 < strlen( $url->getPath() ) &&
-                 \WP2Static\FilesHelper::filePathLooksCrawlable( $s ) ) {
-                $local_urls[] = $url->getPath();
+
+            if ( ! $scheme ) {
+                $url = $url->makeAbsolute( $page_url );
+                $scheme = $url->getScheme();
+            }
+
+            $path = $url->getPath();
+
+            if ( ( 'http' === $scheme || 'https' === $scheme ) &&
+                 $url->equalsHost( $site_host ) && 0 < strlen( $url->getPath() ) &&
+                 \WP2Static\FilesHelper::filePathLooksCrawlable( $path ) ) {
+                $local_urls[] = $path;
             }
         }
 
