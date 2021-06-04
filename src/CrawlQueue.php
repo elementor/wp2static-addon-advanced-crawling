@@ -71,21 +71,15 @@ class CrawlQueue {
     public static function getChunk( string $crawl_start_time, int $size ) : array {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_urls';
-
         $query = $wpdb->prepare(
-            "SELECT id, url FROM $table_name
+            "SELECT id, url FROM {$wpdb->prefix}wp2static_urls
              WHERE crawled_time IS NULL OR crawled_time <= %s
-             LIMIT $size",
-            $crawl_start_time
+             LIMIT %d",
+            $crawl_start_time,
+            $size
         );
-        $rows = $wpdb->get_results( $query );
 
-        $urls = [];
-        foreach ( $rows as $row ) {
-            $urls[ $row->id ] = $row->url;
-        }
-        return $urls;
+        return array_column( $wpdb->get_results( $query, ARRAY_A ), 'url', 'id' );
     }
 
     /**
